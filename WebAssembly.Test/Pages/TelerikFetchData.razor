@@ -1,0 +1,66 @@
+﻿@page "/telerikfetchdata"
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <TelerikGrid Data="forecasts" Sortable="true" Pageable="true" FilterMode="GridFilterMode.FilterMenu">
+        <GridColumns>
+            <GridColumn Field="@nameof(WeatherForecast.Date)" />
+            <GridColumn Field="@nameof(WeatherForecast.TemperatureC)" Title="Temperature (Celsius)" />
+            <GridColumn Field="@nameof(WeatherForecast.TemperatureF)" Title="Temperature (Fahrenheit)" />
+            <GridColumn Field="@nameof(WeatherForecast.Summary)" />
+        </GridColumns>
+    </TelerikGrid>
+}
+
+<div style="height: 10px;" />
+
+<TelerikCalendar></TelerikCalendar>
+
+<div style="height: 10px;" />
+
+<TelerikButton OnClick="@( () => WindowIsVisible = !WindowIsVisible )">Toggle window</TelerikButton>
+
+<TelerikWindow @bind-Visible="@WindowIsVisible">
+    <WindowTitle>
+        <strong>The Title</strong>
+    </WindowTitle>
+    <WindowContent>
+        This is my window <strong>popup</strong> content.
+    </WindowContent>
+    <WindowActions>
+        <WindowAction Name="Minimize"></WindowAction>
+        <WindowAction Name="Maximize"></WindowAction>
+        <WindowAction Name="Close"></WindowAction>
+    </WindowActions>
+</TelerikWindow>
+
+@code {
+    bool WindowIsVisible { get; set; }
+
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    }
+
+    public class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}

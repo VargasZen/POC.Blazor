@@ -1,0 +1,33 @@
+﻿@page "/telerikfetchdata"
+
+@using UI.Electron.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <TelerikGrid Data="forecasts" Sortable="true" Pageable="true" FilterMode="GridFilterMode.FilterMenu">
+        <GridColumns>
+            <GridColumn Field="@nameof(WeatherForecast.Date)" />
+            <GridColumn Field="@nameof(WeatherForecast.TemperatureC)" Title="Temperature (Celsius)" />
+            <GridColumn Field="@nameof(WeatherForecast.TemperatureF)" Title="Temperature (Fahrenheit)" />
+            <GridColumn Field="@nameof(WeatherForecast.Summary)" />
+        </GridColumns>
+    </TelerikGrid>
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+}
